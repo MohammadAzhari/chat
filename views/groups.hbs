@@ -1,0 +1,160 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="/">MA chat</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            user settings
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="/settings">profile photo</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-outline-success" href="/allusers">see all users</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle btn btn-outline-success"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            create or join new group chat
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li>
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link active"
+                  id="home-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#home"
+                  type="button"
+                  role="tab"
+                  aria-controls="home"
+                  aria-selected="true"
+                >New</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  id="profile-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#profile"
+                  type="button"
+                  role="tab"
+                  aria-controls="profile"
+                  aria-selected="false"
+                >join</button>
+              </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+              <div
+                class="tab-pane fade show active"
+                id="home"
+                role="tabpanel"
+                aria-labelledby="home-tab"
+              ><form action="/api/creategroup" method="post">
+                <input
+                  type="text"
+                  name="groupName"
+                  class="form-control"
+                  placeholder="enter the name of the Group"
+                />
+                <button type="submit" class="btn btn-primary">create</button>
+              </form></div><div
+                class="tab-pane fade"
+                id="profile"
+                role="tabpanel"
+                aria-labelledby="profile-tab"
+              ><form action="/api/searchgroup" method="get">
+                <input
+                  type="text"
+                  name="groupName"
+                  class="form-control"
+                  placeholder="enter Group name"
+                />
+                <button type="submit" class="btn btn-primary">search for group</button>
+              </form></div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <form class="d-flex" method="get" action="/allusers">
+        <input
+          class="form-control me-2"
+          type="text"
+          name="user"
+          placeholder="Search"
+          aria-label="Search"
+        />
+        <button class="btn btn-outline-success" type="submit">Search</button>
+        <a class="btn btn-outline-danger" href="/api/logout">LogOut</a>
+      </form>
+    </div>
+  </div>
+</nav>
+<section style="background-color: #eee;">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-md-2 col-lg-3 col-xl-4"></div>
+      <div class="col-md-8 col-lg-5 col-xl-4 mb-4 mb-md-0">
+        <h5 class="font-weight-bold mb-3 text-center text-lg-start">Groups</h5>
+        <div class="card">
+          <div class="card-body">
+            <ul class="list-unstyled mb-0">
+              {{#each groups}}
+                <li class="p-2 border-bottom" style="background-color: #eee;">
+                  <a href="" class="d-flex justify-content-between">
+                    <div class="d-flex flex-row">
+                      <img
+                        src="/images/3.jpg"
+                        alt="avatar"
+                        class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
+                        width="60"
+                      />
+                      <div class="pt-1">
+                        <p class="fw-bold mb-0">{{this.group.groupName}}</p>
+                      </div>
+                    </div>
+                    <div class="pt-1">
+                      <a
+                        href="/api/joingroup/{{this._id}}"
+                        class="btn btn-success rounded-pill"
+                      >
+                        join group
+                      </a>
+                    </div>
+                  </a>
+                </li>
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

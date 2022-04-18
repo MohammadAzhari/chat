@@ -1,0 +1,182 @@
+<section class="background-radial-gradient overflow-hidden">
+  <style>
+    .background-radial-gradient { background-color: hsl(218, 41%, 15%);
+    background-image: radial-gradient(650px circle at 0% 0%, hsl(218, 41%, 35%)
+    15%, hsl(218, 41%, 30%) 35%, hsl(218, 41%, 20%) 75%, hsl(218, 41%, 19%) 80%,
+    transparent 100%), radial-gradient(1250px circle at 100% 100%, hsl(218, 41%,
+    45%) 15%, hsl(218, 41%, 30%) 35%, hsl(218, 41%, 20%) 75%, hsl(218, 41%, 19%)
+    80%, transparent 100%); } #radius-shape-1 { height: 220px; width: 220px;
+    top: -60px; left: -130px; background: radial-gradient(#44006b, #ad1fff);
+    overflow: hidden; } #radius-shape-2 { border-radius: 38% 62% 63% 37% / 70%
+    33% 67% 30%; bottom: -60px; right: -110px; width: 300px; height: 300px;
+    background: radial-gradient(#44006b, #ad1fff); overflow: hidden; } .bg-glass
+    { background-color: hsla(0, 0%, 100%, 0.9) !important; backdrop-filter:
+    saturate(200%) blur(25px); }
+  </style>
+
+  <div class="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
+    <div class="row gx-lg-5 align-items-center mb-5">
+      <div class="col-lg-6 mb-5 mb-lg-0" style="z-index: 10">
+        <h1
+          class="my-5 display-5 fw-bold ls-tight"
+          style="color: hsl(218, 81%, 95%)"
+        >
+          MA.Chat <i class="fa-brands fa-rocketchat"></i>  
+          <br />
+          <span style="color: hsl(218, 81%, 75%)">application</span>
+        </h1>
+        <p class="mb-4 opacity-70" style="color: hsl(218, 81%, 85%)">
+          this chat application made by Node.js Express.js MongoDB Socket.io
+        </p>
+      </div>
+
+      <div class="col-lg-6 mb-5 mb-lg-0 position-relative">
+        <div
+          id="radius-shape-1"
+          class="position-absolute rounded-circle shadow-5-strong"
+        ></div>
+        <div
+          id="radius-shape-2"
+          class="position-absolute shadow-5-strong"
+        ></div>
+
+        <div class="card bg-glass">
+          {{#if msg}}
+          <div class="alert alert-danger">{{msg}}</div>
+          {{else}}
+            
+          {{/if}}
+          <div class="card-body px-4 py-5 px-md-5">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link active"
+                  id="home-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#home"
+                  type="button"
+                  role="tab"
+                  aria-controls="home"
+                  aria-selected="true"
+                >log in</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  id="profile-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#profile"
+                  type="button"
+                  role="tab"
+                  aria-controls="profile"
+                  aria-selected="false"
+                >Sign Up</button>
+              </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+              <div
+                class="tab-pane fade show active"
+                id="home"
+                role="tabpanel"
+                aria-labelledby="home-tab"
+              ><form method="post" action="/login">
+
+                  <!-- Email input -->
+                  <div class="form-outline mb-4 mt-4">
+                    <input
+                      type="text"
+                      name="user"
+                      class="form-control"
+                          required
+                    />
+                    <label class="form-label" for="form3Example3">user name</label>
+                  </div>
+
+                  <!-- Password input -->
+                  <div class="form-outline mb-4">
+                    <input
+                      type="password"
+                      name="password"
+                      class="form-control"
+                          required
+                    />
+                    <label
+                      class="form-label"
+                      for="form3Example4"
+                    >Password</label>
+                  </div>
+
+                  <!-- Submit button -->
+                  <button type="submit" class="btn btn-primary btn-block mb-4">
+                    login
+                  </button>
+
+                </form>
+                
+              </div>
+              <div
+                class="tab-pane fade"
+                id="profile"
+                role="tabpanel"
+                aria-labelledby="profile-tab"
+              ><form action="/signup" method="post">
+
+                  <!-- Email input -->
+                  <div class="form-outline mb-4 mt-4">
+                    <input
+                      type="text"
+                      name="user"
+                      class="form-control"
+                    />
+                    <label class="form-label" for="form3Example3">user name</label>
+                  </div>
+
+                  <!-- Password input -->
+                  <div class="form-outline mb-4">
+                    <input
+                      type="password"
+                      name="password"
+                      class="form-control"
+                    />
+                    <label
+                      class="form-label"
+                      for="form3Example4"
+                    >Password</label>
+                  </div>
+
+                  <!-- confrim password -->
+                  <div class="form-outline mb-4">
+                    <input
+                      type="password"
+                      name="confirm"
+                      class="form-control"
+                    />
+                    <label
+                      class="form-label"
+                      for="form3Example4"
+                    >Confirm Password</label>
+                  </div>
+
+                  <!-- Submit button -->
+                  <button type="submit" class="btn btn-primary btn-block mb-4">
+                    Sign up
+                  </button>
+
+                  </div>
+                </form>
+                <form action="/login" method="post">
+                  <input type="hidden" name="user" value="guest@guest.com" />
+                  <input type="hidden" name="password" value="guest" />
+                  <button
+                    type="submit"
+                    class="btn btn-danger rounded-pill text-white"
+                  >log in as a guest</button>
+                </form>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
