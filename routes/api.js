@@ -1,141 +1,43 @@
-var express = require("express");
-var router = express.Router();
-const User = require("../models/user");
-const Chat = require("../models/chat");
-const { isAuth, isNotAuth } = require("../middle/authcheck");
-const multer = require("multer");
+const express = require("express");
+const router = express.Router();
+const { isAuth } = require("../middle/authcheck");
+const multer = require("../middle/multer");
+const groupKey = require("../middle/privategroup");
+const norender = require("../controllers/norender");
 
-// create a single chat
-router.get("/chat/:id", isAuth, async (req, res, next) => {
-  try {
-    let chats = await Chat.find({
-      $and: [
-        { users: { $elemMatch: { $eq: req.session.user._id } } },
-        { users: { $elemMatch: { $eq: req.params.id } } },
-      ],
-    });
-    if (chats.length > 0) {
-      res.redirect(`/room/${chats[0]._id}`);
-    } else {
-      await Chat.create({
-        users: [req.session.user._id, req.params.id],
-      });
-      res.redirect("/");
-    }
-  } catch (error) {
-    console.log(error);
-  }
-});
+// api route means no rendering pages
 
-// sending message :
-//  {{{ this route switch to socket.IO }}}
+// URL /api/chat/id => create chat
+router.get("/chat/:id", isAuth, norender.createChat);
 
-// router.post("/send", isAuth, (req, res, next) => {
-//   const { id, msg } = req.body;
-//   Chat.findByIdAndUpdate(id, {
-//     $push: {
-//       messages: {
-//         content: msg,
-//         sender: req.session.user._id,
-//       },
-//     },
-//     lastMsg: {
-//       content: msg,
-//       sender: req.session.user._id,
-//     },
-//   })
-//     .then((r) => {
-//       console.log(r);
-//       res.redirect(`/room/${id}`);
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
-// });
+// URL POST /api/group => create group
+router.post("/group", isAuth, norender.createGroup);
 
-// changing profile photo :
-router.post(
-  "/settings",
-  multer({
-    storage: multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, "public/images/");
-      },
-      filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
-      },
-    }),
-  }).single("image"),
-  async (req, res, next) => {
-    try {
-      console.log(req.file);
-      if (req.file)
-        await User.findByIdAndUpdate(req.session.user._id, {
-          pic: req.file.filename,
-        });
-      req.session.user.pic = req.file.filename;
-      res.redirect("/settings");
-    } catch (error) {
-      console.log(error);
-    }
-  }
-);
+// URL POST /api/settings => changing profile photo
+router.post("/settings", multer, norender.uploadPhoto);
 
-//create a new group :
-router.post("/creategroup", isAuth, async (req, res, next) => {
-  try {
-    const { groupName } = req.body;
-    let chat = {
-      group: {
-        is: true,
-        groupName,
-      },
-      users: [req.session.user._id],
-    };
-    await Chat.create(chat);
-    console.log(chat);
-    res.redirect("/");
-  } catch (error) {
-    console.log(error);
-  }
-});
+// URL POST /api/joingroup/id => join to the group
+router.post("/joingroup", isAuth, groupKey, norender.joinGroup);
 
-// serach for group chat :
-router.get("/searchgroup", isAuth, async (req, res, next) => {
-  try {
-    let groups = await Chat.find({
-      "group.is": true,
-    }).find({
-      "group.groupName": { $regex: req.query.groupName, $options: "i" },
-    });
-    console.log(groups);
-    res.render("groups", { groups });
-  } catch (error) {
-    console.log(error);
-  }
-});
+// URL POST /api/deleteadmin
+router.post("/deleteadmin", isAuth, norender.deleteAdmin);
 
-// join to the group :
-router.get("/joingroup/:id", isAuth, async (req, res, next) => {
-  try {
-    await Chat.findOneAndUpdate(
-      {
-        $and: [
-          { _id: req.params.id },
-          { users: { $ne: req.session.user._id } },
-        ],
-      },
-      {
-        $push: { users: req.session.user._id },
-      }
-    );
-    res.redirect("/room/" + req.params.id);
-  } catch (error) {
-    console.log(error);
-  }
-});
+// URL POST /api/makeadminid
+router.post("/makeadmin", isAuth, norender.makeAdmin);
 
-//log out
+// URL POST /api/remove
+router.post("/remove", isAuth, norender.remove);
+
+// URL POST /api/private => to make group private
+router.post("/private", isAuth, norender.privateP);
+
+// URL GET /api/private/id => to make group puplic
+router.get("/private/:id", isAuth, norender.privateG);
+
+// URL POST /api/groupphoto => to change group's photo
+router.post("/groupphoto", isAuth, multer, norender.groupPhoto);
+
+// URL GET /api/logout => logout
 router.get("/logout", isAuth, (req, res, next) => {
   req.session.destroy(() => {
     res.redirect("/");

@@ -12,6 +12,10 @@ const User = mongoose.Schema({
     type: String,
     default: "default.png",
   },
+  isOnline: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("User", User);

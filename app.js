@@ -1,19 +1,19 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var session = require("express-session");
-var indexRouter = require("./routes/index");
-var signRouter = require("./routes/sign");
-var apiRouter = require("./routes/api");
-var flash = require("connect-flash");
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const session = require("express-session");
+const indexRouter = require("./routes/index");
+const signRouter = require("./routes/sign");
+const apiRouter = require("./routes/api");
+const flash = require("connect-flash");
 
 require("dotenv").config();
 
 const mongoose = require("mongoose");
 
-var app = express();
+const app = express();
 
 mongoose
   .connect(process.env.DATABASE)

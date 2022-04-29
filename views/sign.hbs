@@ -58,7 +58,7 @@
                   role="tab"
                   aria-controls="home"
                   aria-selected="true"
-                >log in</button>
+                >log in <i class="fa-solid fa-arrow-right-to-bracket"></i></button>
               </li>
               <li class="nav-item" role="presentation">
                 <button
@@ -70,7 +70,7 @@
                   role="tab"
                   aria-controls="profile"
                   aria-selected="false"
-                >Sign Up</button>
+                >Sign Up <i class="fa-solid fa-user-plus"></i></button>
               </li>
             </ul>
             <div class="tab-content" id="myTabContent">
@@ -86,7 +86,7 @@
                     <input
                       type="text"
                       name="user"
-                      class="form-control"
+                      class="form-control rounded-pill"
                           required
                     />
                     <label class="form-label" for="form3Example3">user name</label>
@@ -97,7 +97,7 @@
                     <input
                       type="password"
                       name="password"
-                      class="form-control"
+                      class="form-control rounded-pill"
                           required
                     />
                     <label
@@ -109,6 +109,7 @@
                   <!-- Submit button -->
                   <button type="submit" class="btn btn-primary btn-block mb-4">
                     login
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
                   </button>
 
                 </form>
@@ -126,7 +127,7 @@
                     <input
                       type="text"
                       name="user"
-                      class="form-control"
+                      class="form-control rounded-pill"
                     />
                     <label class="form-label" for="form3Example3">user name</label>
                   </div>
@@ -136,7 +137,7 @@
                     <input
                       type="password"
                       name="password"
-                      class="form-control"
+                      class="form-control rounded-pill"
                     />
                     <label
                       class="form-label"
@@ -149,7 +150,7 @@
                     <input
                       type="password"
                       name="confirm"
-                      class="form-control"
+                      class="form-control rounded-pill"
                     />
                     <label
                       class="form-label"
@@ -160,17 +161,18 @@
                   <!-- Submit button -->
                   <button type="submit" class="btn btn-primary btn-block mb-4">
                     Sign up
+                    <i class="fa-solid fa-user-plus"></i>
                   </button>
 
                   </div>
                 </form>
                 <form action="/login" method="post">
                   <input type="hidden" name="user" value="guest@guest.com" />
-                  <input type="hidden" name="password" value="guest" />
+                  <input type="hidden" name="password" value="1234" />
                   <button
                     type="submit"
                     class="btn btn-danger rounded-pill text-white"
-                  >log in as a guest</button>
+                  >log in as a guest <i class="fa-solid fa-up-right-from-square"></i></button>
                 </form>
                 </div>
             </div>

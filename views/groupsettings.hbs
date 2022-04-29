@@ -1,0 +1,95 @@
+<div class="container text-center">
+  <div class="mt-4 justfiy-content-center align-items-center mb-5">
+    <img src="/images/{{groupImg}}" class="rounded-circle" width="150">
+    <h3>{{groupName}}</h3>
+    {{#if admin}}
+    <button id="changePhoto" class="btn btn-warning rounded-pill"> change group photo <i class="fa-solid fa-camera"></i> </button>
+    <div id="formPhoto" class="d-none">
+      <form action="/api/groupphoto" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="id" value="{{groupId}}">
+      <input type="file" name="image" class="form-control mt-3 myinput" />
+        <button button
+          type="submit"
+          class="mt-3 btn btn-success rounded-pill"
+        >upload</button>
+      </form>
+    </div>
+    <script src="/js/photoform.js"></script>
+    <div class="mt-3">
+      {{#each group}}
+      <div class="alert alert-primary myinput"> group privacy : 
+        {{#if this.private.is}} private
+          <a href="/api/private/{{this._id}}" class="btn btn-warning rounded-pill"> make it puplic <i class="fa-solid fa-lock-open"></i> </a>
+        {{else}} puplic 
+          <button id="private" class="btn btn-warning rounded-pill"> make it private <i class="fa-solid fa-lock"></i></button>
+        <div id="hider" class="d-none">
+          <form action="/api/private" method="post">
+            <input type="hidden" name="id" value="{{this._id}}">
+            <input type="text" name="key" class="mt-2 form-control myinput" placeholder="group password ...">
+            <button type="submit" class="mt-2 btn btn-success rounded-pill"> make it private <i class="fa-solid fa-lock"></i> </button>
+          </form>
+        </div>
+      </div>
+    <script src="/js/edits.js"></script>
+        {{/if}}
+      {{/each}}
+    </div>
+    {{else}}
+      
+    {{/if}}
+  </div>
+  <h2 class="mt-4 mb-2"> group users : </h2>
+  <ul class="list-unstyled mb-0">
+        {{#each users}}
+          <li
+            class="p-3 border-bottom rounded-pill mb-3"
+            style="background-color: #eee;"
+          >
+            <div class="d-flex justify-content-between">
+              <div class="d-flex flex-row position-relative">
+                <div {{#if this.user.isOnline}}
+                  class="position-absolute text-success"
+                {{else}}
+                  class="position-absolute text-danger"
+                {{/if}} >
+                  <i class="fa-solid fa-circle"></i>
+                </div>
+                <img
+                  src="/images/{{this.user.pic}}"
+                  alt="avatar"
+                  class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
+                  width="60"
+                />
+                <div class="pt-1">
+                  <h3 class="fw-bold mb-0">{{this.user.userName}}</h3>
+                </div>
+              </div>
+              <div class="pt-1">
+                {{#if ../admin}}
+                {{#if this.isAdmin}}
+            <form action="/api/deleteadmin" method="post">
+                <input type="hidden" name="userId" value={{this.user._id}}>
+                <input type="hidden" name="groupId" value={{../groupId}}>
+                <button type="submit" class="btn btn-warning rounded-pill"> admin <i class="fa-solid fa-circle-xmark"></i> </button>
+            </form>
+          {{else}}
+            <form action="/api/makeadmin" method="post">
+                <input type="hidden" name="userId" value={{this.user._id}}>
+                <input type="hidden" name="groupId" value={{../groupId}}>
+                <button type="submit" class="btn btn-success rounded-pill"> admin <i class="fa-solid fa-circle-check"></i> </button>
+            </form>
+          {{/if}}
+              </div>
+              <div class="pt-1">
+                <form action="/api/remove" method="post">
+            <input type="hidden" name="userId" value={{this.user._id}}>
+            <input type="hidden" name="groupId" value={{../groupId}}>
+            <button type="submit" class="btn btn-danger rounded-pill"> remove <i class="fa-solid fa-skull-crossbones"></i> </button>
+        </form> 
+              </div>
+              {{/if}}
+            </div>
+          </li>
+        {{/each}}
+  </ul>
+</div>

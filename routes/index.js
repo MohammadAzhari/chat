@@ -1,185 +1,47 @@
-var express = require("express");
-var router = express.Router();
-const User = require("../models/user");
+const express = require("express");
+const router = express.Router();
 const Chat = require("../models/chat");
-const { isAuth, isNotAuth } = require("../middle/authcheck");
-const chat = require("../models/chat");
+const Group = require("../models/groups");
+const User = require("../models/user");
+const { isAuth } = require("../middle/authcheck");
+const { chickChat, chickGroup } = require("../middle/chickchat");
+const homePage = require("../controllers/homepage");
+const chatPage = require("../controllers/chatpage");
+const groupPage = require("../controllers/grouppage");
+const nav = require("../controllers/nav");
 
-// home page
-router.get("/", isAuth, async (req, res, next) => {
-  try {
-    let empty = false;
-    let chats = await Chat.find({
-      users: { $elemMatch: { $eq: req.session.user._id } },
-    });
-    if (chats.length == 0) {
-      empty = true;
-    }
-    chats = await User.populate(chats, {
-      path: "lastMsg.sender",
-      select: "userName pic",
-    });
-    // i need if !group : userName , pic , lastmsg
-    let arrOfObj = [];
-    await chats.forEach(async (chat) => {
-      if (!chat.group.is) {
-        let id;
-        for (let i = 0; i < 2; i++) {
-          if (chat.users[i] != req.session.user._id) {
-            id = chat.users[i];
-          }
-        }
-        let user = await User.findById(id);
-        let obj = {
-          _id: chat._id,
-          userName: user.userName,
-          pic: user.pic,
-          lastMsg: chat.lastMsg.content,
-          sender: chat.lastMsg.sender ? chat.lastMsg.sender.userName : "",
-        };
-        arrOfObj.push(obj);
-      } else {
-        let obj = {
-          _id: chat._id,
-          userName: chat.group.groupName,
-          pic: "3.jpg",
-          lastMsg: chat.lastMsg.content,
-          sender: chat.lastMsg.sender ? chat.lastMsg.sender.userName : "",
-        };
-        arrOfObj.push(obj);
-      }
-    });
-    let users = await User.find({ _id: { $ne: req.session.user._id } });
-    res.render("home", {
-      empty,
-      users,
-      chats: arrOfObj,
-      params: false,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
+// ------------------------------------------------------------------------------
+// index route means there is render function
+// ------------------------------------------------------------------------------
 
-// here user can select a chat :
-router.get("/room/:id", isAuth, async (req, res, next) => {
-  try {
-    let chats = await Chat.find({
-      users: { $elemMatch: { $eq: req.session.user._id } },
-    });
-    if (chats.length == 0) {
-      empty = true;
-    }
-    chats = await User.populate(chats, {
-      path: "lastMsg.sender",
-      select: "userName pic",
-    });
-    // i need if !group : userName , pic , lastmsg
-    let arrOfObj = [];
-    let currentChat = {};
-    await chats.forEach(async (chat) => {
-      if (!chat.group.is) {
-        let id;
-        for (let i = 0; i < 2; i++) {
-          if (chat.users[i] != req.session.user._id) {
-            id = chat.users[i];
-          }
-        }
-        let user = await User.findById(id);
-        if (chat._id == req.params.id) {
-          currentChat = {
-            name: user.userName,
-            pic: user.pic,
-          };
-        }
-        let obj = {
-          _id: chat._id,
-          userName: user.userName,
-          pic: user.pic,
-          lastMsg: chat.lastMsg.content,
-          sender: chat.lastMsg.sender ? chat.lastMsg.sender.userName : "",
-        };
-        arrOfObj.push(obj);
-      } else {
-        let obj = {
-          _id: chat._id,
-          userName: chat.group.groupName,
-          pic: "3.jpg",
-          lastMsg: chat.lastMsg.content,
-          sender: chat.lastMsg.sender ? chat.lastMsg.sender.userName : "",
-        };
+// URL GET / => homepage
+router.get("/", isAuth, homePage);
 
-        arrOfObj.push(obj);
-      }
-    });
-    let chat = await Chat.findById(req.params.id);
-    if (chat.group.is) {
-      currentChat = {
-        name: chat.group.groupName,
-        pic: "3.jpg",
-      };
-    }
-    chat = await User.populate(chat, {
-      path: "messages.sender",
-      select: "userName pic",
-    });
-    let messages =
-      chat.messages.length > 0
-        ? chat.messages.map((msg) => {
-            let returned = {
-              content: msg.content,
-              my: msg.sender._id == req.session.user._id ? true : false,
-              pic: msg.sender.pic,
-              sender: msg.sender.userName,
-            };
-            return returned;
-          })
-        : [];
-    res.render("home", {
-      chats: arrOfObj,
-      params: true,
-      messages,
-      userId: req.session.user._id,
-      chatId: req.params.id,
-      userName: req.session.user.userName,
-      chatName: currentChat.name,
-      chatPic: currentChat.pic,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
+// URL GET /chat/id => chatpage
+router.get("/chat/:id", isAuth, chickChat, chatPage);
 
-// search or see users :
-router.get("/allusers", isAuth, async (req, res, next) => {
-  try {
-    let users;
-    if (!req.query.user)
-      users = await User.find({ _id: { $ne: req.session.user._id } });
-    else {
-      users = await User.find({
-        userName: { $regex: req.query.user, $options: "i" },
-      }).find({ _id: { $ne: req.session.user._id } });
-    }
-    res.render("users", { arr: users });
-  } catch (error) {
-    console.log(error);
-  }
-});
+// URL GET /group/id => grouppage
+router.get("/group/:id", isAuth, chickGroup, groupPage);
+
+// URL GET /search => search
+router.get("/search", isAuth, nav.search);
+
+// URL GET /groupsettings/id :
+router.get("/groupsettings/:id", isAuth, nav.groupSettings);
 
 // change profile photo :
 router.get("/settings", isAuth, (req, res, next) => {
   res.render("settings", {
+    nav: true,
+    userId: req.session.user._id,
     userName: req.session.user.userName,
     userPic: req.session.user.pic,
   });
 });
 
-// create group chat :
-router.get("/group", isAuth, async (req, res, next) => {
-  res.render("group", {
-    userId: req.session.user._id,
-  });
+router.get("/dbusers", async (req, res) => {
+  let users = await User.find();
+  console.log(users);
 });
 
 // see db :
@@ -191,14 +53,9 @@ router.get("/dbchats", async (req, res, next) => {
 });
 
 //clear.all messages :
-router.get("/clear", (req, res, next) => {
-  Chat.deleteMany().then(() => {
-    res.redirect("/");
-  });
-});
-
-router.get("/front", (req, res, next) => {
-  res.render("copy");
+router.get("/clear", async (req, res, next) => {
+  await Chat.deleteMany();
+  await Group.deleteMany();
 });
 
 module.exports = router;

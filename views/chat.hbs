@@ -1,0 +1,108 @@
+<div class="container mt-3">
+  <div class="col-sm-12 col-md-12">
+    <div
+      class="p-3 border-bottom rounded-pill mb-3 d-flex justify-content-between mytop"
+      style="background-color: #eee;"
+    >
+    <div class="d-flex flex-row position-relative">
+      {{#if group}}
+      {{else}}
+      <div {{#if online}}
+        class="position-absolute text-success"
+        {{else}}
+        class="position-absolute text-danger"
+        {{/if}} >
+        <i class="fa-solid fa-circle"></i>
+      </div>
+      {{/if}}
+      <img
+        src="/images/{{pic}}"
+        alt="avatar"
+        class="rounded-circle d-flex align-self-center me-3 shadow-1-strong"
+        width="60"
+      />
+      <div class="pt-1">
+        <h3 class="fw-bold mb-0">{{name}}</h3>
+      </div>
+    </div>
+      {{#if group}}
+        <a href="/groupsettings/{{chatId}}">
+          <i class="fa-solid fa-circle-info fa-3x"></i>
+        </a>
+      {{else}}
+      {{/if}}
+    </div>
+    <div
+      class="pt-3 pe-3 mymsg"
+      data-mdb-perfect-scrollbar="true"
+      style="position: relative; min-height;: 50%"
+      id="container"
+    >
+      {{#each messages}}
+        {{#if this.my}}
+          <div class="d-flex flex-row justify-content-start">
+            <img
+              src="/images/{{this.pic}}"
+              alt="avatar 1"
+              style="width: 45px; height: 100%;"
+            />
+            <div>
+              <p
+                class="small p-2 ms-3 mb-1 rounded-3"
+                style="background-color: #f5f6f7;"
+              >{{this.content}}</p>
+              <p
+                class="small ms-3 mb-3 rounded-3 text-muted float-end"
+              >{{this.time}}</p>
+            </div>
+          </div>
+        {{else}}
+          <div class="d-flex flex-row justify-content-end">
+            <div>
+              <p
+                class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary"
+              >{{this.content}}</p>
+              <p class="small me-3 mb-3 rounded-3 text-muted">{{this.time}}</p>
+            </div>
+            <img
+              src="/images/{{this.pic}}"
+              alt="avatar 1"
+              style="width: 45px; height: 100%;"
+            />
+          </div>
+        {{/if}}
+      {{/each}}
+
+    </div>
+
+    <div id="typing" class="mytyp"></div>
+    <div
+      class="text-muted mychat d-flex justify-content-start align-items-center pe-3 pt-3 mt-2"
+    >
+      <img
+        src="/images/{{myPic}}"
+        alt="avatar 3"
+        style="width: 40px; height: 100%;"
+      />
+      <input
+        type="text"
+        class="form-control form-control-lg"
+        id="message"
+        placeholder="Type message"
+      />
+      {{#if group}}
+        <input type="hidden" id="cog" value="group" />
+      {{else}}
+        <input type="hidden" id="cog" value="chat" />
+      {{/if}}
+
+      <input type="hidden" id="pic" value={{myPic}} />
+      <input type="hidden" id="chatId" value={{chatId}} />
+      <input type="hidden" id="userName" value={{userName}} />
+      <button id="btn" class="btn ms-3"><i class="fas fa-paper-plane"></i></button>
+    </div>
+
+  </div>
+</div>
+
+<script src="/sockets/chatsocket.js"></script>
